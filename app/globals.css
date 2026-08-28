@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --ink: #102a43; --gold: #f2c14e; --coral: #e76f51; --sand: #f7f3ea; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--sand); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+button, a { transition: transform 160ms ease-out, opacity 160ms ease-out, background-color 160ms ease-out; }
+button:active, a:active { transform: scale(.97); }
+:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
