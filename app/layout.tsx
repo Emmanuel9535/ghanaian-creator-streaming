@@ -17,8 +17,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="#discover" className="hover:text-coral">Discover</a>
               <a href="#creators" className="hover:text-coral">For creators</a>
               <a href="#about" className="hover:text-coral">About</a>
+              <a href="/creator" className="hover:text-coral">Creator studio</a>
             </nav>
-            <a href="#join" className="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white hover:bg-coral">Join the network</a>
+            <div className="flex items-center gap-3"><a href="/auth" className="hidden text-sm font-bold text-ink/70 hover:text-coral sm:inline">Log in</a><a href="#join" className="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white hover:bg-coral">Join the network</a></div>
           </div>
         </header>
         <main>{children}</main>
