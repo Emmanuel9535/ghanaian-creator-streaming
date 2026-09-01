@@ -15,6 +15,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-wrap gap-3" id="join">
             <a href="#discover" className="rounded-full bg-coral px-6 py-3 font-bold text-white hover:bg-ink">Explore the vision</a>
             <a href="#creators" className="rounded-full border border-ink/20 px-6 py-3 font-bold hover:border-coral hover:text-coral">I am a creator</a>
+            <a href="/checkout" className="rounded-full border border-ink/20 px-6 py-3 font-bold hover:border-coral hover:text-coral">Test checkout</a>
           </div>
         </div>
         <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] bg-ink p-8 text-white shadow-2xl shadow-ink/15">
@@ -34,7 +35,7 @@ export default function HomePage() {
       </section>
 
       <section id="creators" className="mx-auto max-w-6xl px-5 py-24">
-        <div className="grid gap-10 md:grid-cols-[.7fr_1.3fr] md:items-start"><p className="text-sm font-black uppercase tracking-[.2em] text-coral">The first chapter</p><div><h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">Not just another catalogue. <span className="text-coral">A creative economy in motion.</span></h2><p className="mt-6 max-w-2xl text-lg leading-8 text-ink/65">The foundation is ready for the next stages: secure accounts, a searchable film catalogue, creator submissions, rights management, and eventually Mux playback and Paystack test payments.</p></div></div>
+        <div className="grid gap-10 md:grid-cols-[.7fr_1.3fr] md:items-start"><p className="text-sm font-black uppercase tracking-[.2em] text-coral">The first chapter</p><div><h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">Not just another catalogue. <span className="text-coral">A creative economy in motion.</span></h2><p className="mt-6 max-w-2xl text-lg leading-8 text-ink/65">The foundation is ready for the next stages: secure accounts, a searchable film catalogue, creator submissions, rights management, and eventually Mux playback and Paystack test payments. The test checkout is available from the navigation while live payment remains disabled.</p></div></div>
       </section>
     </>
   );
