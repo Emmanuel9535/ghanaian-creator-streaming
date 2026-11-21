@@ -2,11 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --ink: #102a43; --gold: #f2c14e; --coral: #e76f51; --sand: #f7f3ea; }
+:root {
+  --sky: #38bdf8;
+  --sky-soft: #e0f2fe;
+  --navy: #0f2742;
+  --canvas: #f8fafc;
+  --text: #172b4d;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --error: #dc2626;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--sand); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
-button, a { transition: transform 160ms ease-out, opacity 160ms ease-out, background-color 160ms ease-out; }
-button:active, a:active { transform: scale(.97); }
-:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+body { margin: 0; background: var(--canvas); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+a, button, input, select { transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+button:active, a:active { transform: translateY(1px); }
+:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+
+@layer components {
+  .surface { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-slate-500; }
+  .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-sm hover:bg-sky-300; }
+  .secondary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-sky-300 hover:bg-sky-50; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

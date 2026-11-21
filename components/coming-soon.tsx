@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+export function ComingSoon({ eyebrow, title, description, action = "Dashboard" }: { eyebrow: string; title: string; description: string; action?: string }) {
+  return <section className="mx-auto max-w-3xl py-8 sm:py-16"><p className="eyebrow">{eyebrow}</p><h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">{title}</h1><p className="mt-4 max-w-2xl text-base leading-7 text-slate-500">{description}</p><div className="surface mt-10 flex flex-col items-center px-6 py-14 text-center"><div className="grid h-14 w-14 place-items-center rounded-2xl bg-sky-50 text-2xl text-sky-600">◆</div><h2 className="mt-5 text-lg font-black text-slate-950">Coming in a later development stage</h2><p className="mt-2 max-w-md text-sm leading-6 text-slate-500">This navigation item is intentionally visible so the product foundation is clear, but it is not pretending to be functional yet.</p><Link href="/dashboard" className="secondary-button mt-6">Back to {action}</Link></div></section>;
+}
