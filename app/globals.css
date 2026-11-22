@@ -25,6 +25,10 @@ button:active, a:active { transform: translateY(1px); }
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-slate-500; }
   .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-sm hover:bg-sky-300; }
   .secondary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-sky-300 hover:bg-sky-50; }
+  .field { @apply block text-sm font-semibold text-slate-700; }
+  .field > span { @apply mb-2 block; }
+  .field em { @apply font-normal not-italic text-slate-400; }
+  .field input, .field select, .field textarea { @apply min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100; }
 }
 
 @media (prefers-reduced-motion: reduce) {
