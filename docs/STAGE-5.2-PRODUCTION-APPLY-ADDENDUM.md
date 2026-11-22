@@ -31,3 +31,8 @@ The Supabase CLI assigned server versions `20261122095443` and `20261122095542`,
 ## Git and preview
 
 The initial requested commit is `83f3639b8b6ab7239dfc0da606ad2f62dde67608` on pushed branch `stage5-2-production-security-audit`, with exact subject `Stage 5.2: Harden production RPC permissions and audit schema`. Its Vercel preview `dpl_8EqyghHGLjBfJuKpLMFTpEtABzG6` (`https://ghanaian-creator-streaming-igkuq9io6.vercel.app`) reached `READY`. Unauthenticated requests to `/`, `/dashboard`, and `/api/health` redirected to Vercel SSO; no temporary share link was created, so authenticated page, database-connectivity, and financial acceptance checks remain blocked. The normal follow-up push and its preview check are still pending at the time of this revision.
+
+
+## Follow-up sync commit and preview
+
+The filename/reference and handover synchronization was pushed normally as commit `c7547fb09930e8ce3eb5fbeb0c6e3103fc05191d` (`Stage 5.2: Sync migration versions to production ledger`) on `stage5-2-production-security-audit`. Vercel deployment `dpl_H5412qseKinZgVJvnVWjhq3QUfCK` (`https://ghanaian-creator-streaming-gwwg50by3.vercel.app`) reached `READY`. This supersedes the earlier pending-preview note. The preview's authenticated workflow and database checks remain unverified behind SSO.

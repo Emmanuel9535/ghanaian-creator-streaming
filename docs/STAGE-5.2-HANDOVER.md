@@ -78,3 +78,8 @@ The reversible Stage 5.2 down script restores the pre-migration PUBLIC/anon gran
 The initial requested commit's preview `dpl_8EqyghHGLjBfJuKpLMFTpEtABzG6` (`https://ghanaian-creator-streaming-igkuq9io6.vercel.app`) reached `READY`. Unauthenticated `/`, `/dashboard`, and `/api/health` requests redirected to Vercel SSO. No temporary share link was created; authenticated routes, database connectivity, and app acceptance remain unverified. Existing Stage 5.1 previews were also `READY`, but SSO prevented protected-route inspection. The follow-up commit preview must be checked after push.
 
 Stage 6 reconciliation is **not ready** until the legacy live-schema/history gap is deliberately reconciled and production owner/attendant acceptance has been completed in a safe authorized environment. No Stage 6 functionality was implemented.
+
+
+## Follow-up push and preview status (2026-11-22)
+
+The migration filename/document synchronization was committed and pushed normally as `c7547fb09930e8ce3eb5fbeb0c6e3103fc05191d` (`Stage 5.2: Sync migration versions to production ledger`). Vercel deployment `dpl_H5412qseKinZgVJvnVWjhq3QUfCK` for that commit reached `READY` at `https://ghanaian-creator-streaming-gwwg50by3.vercel.app`. This supersedes the pending-preview sentence above. It does not establish authenticated route access or live financial workflow acceptance; those remain untested behind Vercel SSO.
