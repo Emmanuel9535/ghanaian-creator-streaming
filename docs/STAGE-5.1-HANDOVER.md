@@ -4,7 +4,7 @@
 
 Work was continued on `stage5-1-migration-recovery`, starting at `49f0da016ab744886f43dd13d5df7656b84b8b21`. This handover covers migration-source recovery, a separate security-hardening migration, disposable-database replay and regression checks, application checks, and preview metadata. No Stage 6 work was started.
 
-The authorized Supabase project `txeobytsmfjbweoyetqh` was queried read-only and remained `ACTIVE_HEALTHY` on PostgreSQL 17.6.1.166. Its migration ledger still contains exactly the ten versions in the table below. No migration was applied, no production data or schema was modified, and no database reset, drop, truncate, or recreation was performed against Supabase. The only database created or recreated during this work was the disposable local `stage51_test` database on PostgreSQL 16 at `127.0.0.1:55432`.
+The authorized Supabase project `txeobytsmfjbweoyetqh` was queried read-only and remained `ACTIVE_HEALTHY` on PostgreSQL 17.6.1.166. The statements in this handover that the live ledger had ten versions and no migration was applied are a historical snapshot from before the user approved the exact Stage 5.1 → Stage 5.2 production sequence. Stage 5.1 was subsequently applied and recorded as `20261122095443`; Stage 5.2 followed as `20261122095542`. Current production ACL verification and status are recorded in [the Stage 5.2 production-apply addendum](STAGE-5.2-PRODUCTION-APPLY-ADDENDUM.md). No production reset, drop, truncate, or recreation was performed. The only database created or recreated during the earlier Stage 5.1 work was disposable local `stage51_test` on PostgreSQL 16 at `127.0.0.1:55432`.
 
 ## Migration provenance and replay order
 
@@ -22,7 +22,7 @@ The active `supabase/migrations/` directory now contains the ten exact SQL sourc
 | `20261122021155` | `stage_5_expenses_workflow_rpc` | Exact ledger statement recovered from the ledger |
 | `20261122081505` | `stage5_expense_cashbook_read_rpcs` | Exact ledger statement; the old numbered file had an additional revoke absent from the ledger |
 | `20261122081656` | `stage5_rpc_access_hardening` | Exact ledger statement |
-| `20261122090128` | `stage5_1_tenant_idempotency_and_rpc_security` | New Stage 5.1 security migration; not yet applied to Supabase |
+| `20261122095443` | `stage5_1_tenant_idempotency_and_rpc_security` | Applied to Supabase after this initial handover was prepared |
 
 All nine files from the original Stage 5 commit were copied byte-for-byte to `supabase/legacy_migrations/`, with checksums recorded in that directory's README. This keeps provenance and prior work intact while preventing old numbered filenames from being mistaken for the authoritative remote migration history. In particular, the old `0005` differed from the ledger source in comments/newline, `0007` and `0009` differed by final newline, and `0008` carried an extra `anon` revoke. Historical corrections were not silently folded into those files; the active files now use the ledger bytes.
 

@@ -1,114 +1,80 @@
 # Stage 5.2 Handover — Production RPC ACL Audit and Schema Drift
 
-## Scope and production decision
+## Current status
 
-Repository: `Emmanuel9535/ghanaian-creator-streaming`. Starting commit: `9336e9c25f566de775ac0e205f87e1be178ae8b8` on `stage5-1-migration-recovery`. Work is on `stage5-2-production-security-audit`; the requested commit subject is `Stage 5.2: Harden production RPC permissions and audit schema`.
+Repository: `Emmanuel9535/ghanaian-creator-streaming`. The requested branch is `stage5-2-production-security-audit`. Initial exact-subject commit `83f3639b8b6ab7239dfc0da606ad2f62dde67608` was pushed with subject `Stage 5.2: Harden production RPC permissions and audit schema`; this handover and active migration filenames are being synchronized to the production ledger in a normal, non-force-pushed follow-up. The live application details are also in [the production-apply addendum](STAGE-5.2-PRODUCTION-APPLY-ADDENDUM.md).
 
-Stage 5.2 prepares an ACL-only migration and rollback script. No Stage 6 reconciliation implementation was added. No production SQL was applied, and no live financial rows, schema objects, or migration-ledger entries were changed. Although a later instruction asked to apply the production migration, application was held: the live migration ledger does not contain Stage 5.1, the Stage 5.2 migration is ordered after it, and the live `can_operate_booth`/`record_expense` definitions still lack the booth-to-business association guard that Stage 5.1 adds. Applying only Stage 5.2 would tighten anonymous ACLs but leave that authenticated cross-business integrity/security issue unresolved and would put the migration out of the recorded sequence. Resolve/reconcile Stage 5.1 and review the exact production effects before any production migration.
+The user explicitly authorized the exact sequence Stage 5.1 → Stage 5.2. Both were applied successfully to Supabase. Stage 5.1 precedes Stage 5.2 in the live ledger, and post-application catalog checks verified its security changes and Stage 5.2's ACL effects. No production financial rows were written by either migration. No Stage 6 functionality was implemented; no production promotion or reset/drop/truncate/recreation was performed.
 
-## Production snapshot and migration history
+## Production ledger and schema history
 
-Read-only inspection of Supabase project `txeobytsmfjbweoyetqh` showed `ACTIVE_HEALTHY`, PostgreSQL `17.6.1.166`. The live migration ledger has exactly these ten entries and stops at `20261122081656`:
+Supabase project `txeobytsmfjbweoyetqh` is `ACTIVE_HEALTHY`, PostgreSQL `17.6.1.166`. The initial read-only snapshot had ten entries through `20261122081656`. The live ledger now has those ten entries followed by:
 
-| Version | Name |
+| Version | Name | Result |
+|---|---|---|
+| `20261122095443` | `stage5_1_tenant_idempotency_and_rpc_security` | Applied successfully first |
+| `20261122095542` | `stage5_2_rpc_permission_hardening` | Applied successfully second |
+
+The active local files have been renamed to those exact server-generated versions so future migration tooling recognizes the applied history and preserves order. This is filename synchronization only; SQL payloads are unchanged. The Stage 5.2 rollback is in `supabase/rollback/20261122095542_stage5_2_rpc_permission_hardening.down.sql`.
+
+The pre-Stage-5.1/5.2 ledger contained: `20260828080413 initial_platform_foundation`; `20261122000606 business_onboarding`; `20261122001735 transactions`; `20261122014214 stage_4_financial_ledger`; `20261122015151 stage4_1_dashboard_access_hardening`; `20261122021128 stage_5_expenses_schema`; `20261122021143 stage_5_expenses_recording_rpc`; `20261122021155 stage_5_expenses_workflow_rpc`; `20261122081505 stage5_expense_cashbook_read_rpcs`; `20261122081656 stage5_rpc_access_hardening`.
+
+### Live-schema/history drift (classified; no invented migrations)
+
+- `auth` and `auth.users` are Supabase platform-managed. `public.profiles`, `handle_new_user`, and `on_auth_user_created` are represented in the active initial migration.
+- `public.current_user_role()`, `public.is_admin()`, and role-aware legacy profile policies correspond to archived `supabase/legacy_migrations/0002_auth_hardening.sql`; the old changes are not represented as separate entries in the recovered live migration ledger. The Stage 5.1 safe self-update policy is now present.
+- Live `public.payments`, its indexes/RLS policies, `touch_payment_updated_at()`, and `payments_set_updated_at` correspond to archived `0003_payments.sql`; removal of the broad payment update policy is in archived `0004_payment_update_hardening.sql`. Neither is in the recovered live ledger. Their production creation event cannot be inferred. These files were not replayed or assigned synthetic versions.
+- No object was proven manually created. The active recovered history still does not reconstruct all live legacy auth/payment objects; resolve that history/origin gap deliberately before claiming full reproducibility or beginning Stage 6.
+
+## RPC audit: pre-migration design and application callers
+
+The audited routines are `SECURITY DEFINER` with fixed `search_path = public`. Before the two migrations, the first ten functions below had effective `PUBLIC` and `anon` execution as well as authenticated/service-role access. No anonymous workflow was required. The existing Stage 5 expense/cashbook RPCs were already client-protected. App callers use the authenticated Supabase client; no `supabaseAdmin.rpc()` financial call was found. The repository service-role client is used by payment API routes, so existing `service_role` grants were preserved.
+
+| Function/signature | Authorization, effects, and caller |
 |---|---|
-| `20260828080413` | `initial_platform_foundation` |
-| `20261122000606` | `business_onboarding` |
-| `20261122001735` | `transactions` |
-| `20261122014214` | `stage_4_financial_ledger` |
-| `20261122015151` | `stage4_1_dashboard_access_hardening` |
-| `20261122021128` | `stage_5_expenses_schema` |
-| `20261122021143` | `stage_5_expenses_recording_rpc` |
-| `20261122021155` | `stage_5_expenses_workflow_rpc` |
-| `20261122081505` | `stage5_expense_cashbook_read_rpcs` |
-| `20261122081656` | `stage5_rpc_access_hardening` |
+| `financial_dashboard(uuid,uuid)` | Stage 4.1 membership and owner/assigned-booth scope; reads financial/accounting tables. `app/dashboard/page.tsx`. |
+| `post_momo_transaction(uuid,text)` | Requires authenticated user, request ID, successful transaction, and booth authorization; writes postings, ledger, balances, commissions. `app/new-transaction/page.tsx`. |
+| `reverse_momo_transaction(uuid,text,text)` | Owner authorization and reason; writes reversal ledger/posting and updates balances/status. No direct `.rpc()` app caller identified. |
+| `financial_account_id(uuid,uuid,text)` | Unguarded ID lookup in financial accounts; no repository caller. No client execution required; restricted to service role. |
+| `can_operate_booth(uuid,uuid)` | Checks membership and owner/attendant assignment; transaction/expense RPC and transaction RLS helper. Before Stage 5.1 it did not validate booth/business association; that guard is now present. |
+| `is_business_member(uuid)` / `is_business_owner(uuid)` | Authenticated RLS and workflow helpers for active membership or OWNER membership. No anon workflow. |
+| `current_user_role()` / `is_admin()` | Archived auth/RLS helpers used for role/admin checks. No anon workflow. |
+| `generate_momo_transaction_reference()` | Transaction-insert default sequence/reference; anon direct execution not needed. |
+| `record_expense(uuid,uuid,uuid,text,bigint,timestamptz,uuid,text,text,text)` | Authenticated request ID, booth authorization, same-business category and idempotency checks; writes expense/history and can post for owners. `app/expenses/page.tsx`. Stage 5.1 now checks booth/business association. |
+| `approve_expense(uuid,text)` / `reject_expense(uuid,text)` | Business-owner authorization; changes expense and history. `app/expenses/page.tsx`. |
+| `reverse_expense(uuid,text,text)` | Owner, posted-state, reason and request-ID checks; writes reversal and updates balances/state. `app/expenses/page.tsx`. |
+| `expense_dashboard_summary(uuid,uuid)` | Member access; owner for business-wide or assigned booth; reads scoped summaries. `app/expenses/page.tsx`. |
+| `cashbook_page(uuid,uuid,uuid,text,timestamptz,timestamptz,integer,integer)` | Membership/owner/assigned booth and account/page scope; reads ledger, postings, expenses, transactions and profiles. `app/cashbook/page.tsx`. |
+| `generate_expense_reference()` | Expense reference sequence default; no anonymous execution required. |
+| `_post_expense_locked(uuid,uuid)` | Internal helper called by authorized expense RPCs; locked posting writes. Not an app RPC. Owner-only execution is retained. |
 
-Repository migration `20261122090128_stage5_1_tenant_idempotency_and_rpc_security.sql` is not applied in production. Stage 5.2 (`20261122094500`) is a separate local file after that prerequisite. The live active history must not be represented as if it includes Stage 5.1 or Stage 5.2.
+## Stage 5.2 permission migration and live result
 
-## RPC/function audit and permission plan
+The ACL-only migration `supabase/migrations/20261122095542_stage5_2_rpc_permission_hardening.sql` affects the ten targets: `is_business_member(uuid)`, `is_business_owner(uuid)`, `can_operate_booth(uuid,uuid)`, `current_user_role()`, `is_admin()`, `generate_momo_transaction_reference()`, `financial_dashboard(uuid,uuid)`, `post_momo_transaction(uuid,text)`, `reverse_momo_transaction(uuid,text,text)`, and `financial_account_id(uuid,uuid,text)`. It changes grants only; no function bodies, tables, policies, or rows are changed in Stage 5.2.
 
-All listed functions are `SECURITY DEFINER` with a fixed `search_path = public` in their recovered/archived definitions. The table distinguishes `anon` effective execution from direct `PUBLIC` grants: for the first ten functions, production has both direct `anon` and `PUBLIC` EXECUTE, so anonymous callers are effective. `postgres` is the function owner. No function below requires anonymous execution.
+Post-apply Supabase catalog queries verified all reviewed functions remain `SECURITY DEFINER`, with no effective anon or `PUBLIC` execution:
 
-| Function/signature | Live effective EXECUTE before | Auth checks / data effects / app use |
-|---|---|---|
-| `financial_dashboard(uuid, uuid)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Stage 4.1 requires an active membership and restricts attendants to their assigned booth; reads `business_members`, `financial_accounts`, `transactions`, `commission_records`, and `transaction_accounting_treatments`. Direct app caller: `app/dashboard/page.tsx`. Anonymous is not required. |
-| `post_momo_transaction(uuid, text)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Requires a non-null `auth.uid()`, stable request ID, successful transaction, and `can_operate_booth`. Locks/reads transaction, account, treatment and posting rows; writes postings, ledger entries, account balances and commission records. Direct app caller: `app/new-transaction/page.tsx`. Anonymous is not required. |
-| `reverse_momo_transaction(uuid, text, text)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Requires authenticated business-owner authorization and a reason; writes a reversal posting and ledger entries, updates account balances, transaction status and commission state. No direct application `.rpc()` caller was found. Anonymous is not required. |
-| `financial_account_id(uuid, uuid, text)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Unguarded lookup of an ID in `financial_accounts`; no authorization predicate and no repository/app caller. Anonymous and authenticated client execution are not required. Proposed exception: service role only. |
-| `can_operate_booth(uuid, uuid)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Checks active membership and owner/attendant assignment; called by transaction/expense RPCs and transaction RLS. **Live function does not verify that the booth belongs to the supplied business.** Stage 5.1 adds that association check; it remains unapplied. |
-| `is_business_member(uuid)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Checks active membership for `auth.uid()`; used by RLS policies and financial workflows. No anonymous workflow is required. |
-| `is_business_owner(uuid)` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Checks active OWNER membership for `auth.uid()`; used by RLS and expense/reversal workflows. No anonymous workflow is required. |
-| `current_user_role()` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Reads `profiles.role` for `auth.uid()` (defaults to `viewer`); an auth/RLS helper from archived legacy `0002_auth_hardening.sql`. No anonymous workflow is required. |
-| `is_admin()` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Uses `current_user_role()` and tests administrator/super-admin; an auth/RLS helper from archived legacy `0002_auth_hardening.sql`. No anonymous workflow is required. |
-| `generate_momo_transaction_reference()` | `PUBLIC`, `anon`, `authenticated`, `service_role` | Advances the MoMo reference sequence and returns a reference; used as `transactions.internal_reference` default during authenticated transaction insertion. Anonymous direct invocation is not required. |
-| `record_expense(uuid, uuid, uuid, text, bigint, timestamptz, uuid, text, text, text)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires authentication, a stable request ID, `can_operate_booth`, and a category for the same business; writes expenses/status history and may call the internal posting helper for owners. Direct app caller: `app/expenses/page.tsx`. Live body also lacks the booth-to-business association check; Stage 5.1 adds it. |
-| `approve_expense(uuid, text)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires business-owner authorization; updates expense/history and posts through the internal helper. Direct app caller: `app/expenses/page.tsx`. |
-| `reject_expense(uuid, text)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires owner authorization and a reason; updates expense status/notes and history. Direct app caller: `app/expenses/page.tsx`. |
-| `reverse_expense(uuid, text, text)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires owner authorization, posted state, reason and request ID; writes reversal posting/ledger, adjusts account balance and expense state. Direct app caller: `app/expenses/page.tsx`. |
-| `expense_dashboard_summary(uuid, uuid)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires member access; owner for business-wide, assigned booth for booth scope. Reads expenses/categories/business settings/accounts. Direct app caller: `app/expenses/page.tsx`. |
-| `cashbook_page(uuid, uuid, uuid, text, timestamptz, timestamptz, integer, integer)` | `authenticated`, `service_role` (not anon/PUBLIC) | Requires member/owner/assigned-booth access and validates account/page scope; reads opening balances, accounts, ledger, postings, expenses, transactions and profiles. Direct app caller: `app/cashbook/page.tsx`. |
-| `generate_expense_reference()` | `authenticated`, `service_role` (not anon/PUBLIC) | Reference-sequence default for expense insertion; no anonymous access is granted or needed. |
-| `_post_expense_locked(uuid, uuid)` | `postgres` only; no effective client or service-role EXECUTE | Internal expense posting helper called from authorized expense RPCs; reads/locks expense/account rows and writes posting, ledger, balance and status records. Not an app RPC. |
+- The first nine listed targets retain `authenticated` and `service_role` execution.
+- `financial_account_id(uuid,uuid,text)` is service-role-only; authenticated access is intentionally removed because the helper has no authorization predicate and no app caller.
+- `record_expense`, `approve_expense`, `reject_expense`, `reverse_expense`, `expense_dashboard_summary`, `cashbook_page`, and `generate_expense_reference` retain authenticated/service-role execution and deny anon.
+- Internal `_post_expense_locked(uuid,uuid)` remains owner-only; anon, authenticated, and service role cannot execute it.
 
-`app/dashboard/page.tsx`, `app/new-transaction/page.tsx`, `app/expenses/page.tsx`, and `app/cashbook/page.tsx` use the authenticated Supabase client. No direct `supabaseAdmin.rpc()` call was found; the repository's service-role client is used for payment API routes. Existing `service_role` grants on the reviewed financial functions are retained to avoid removing an externally managed trusted backend path, but no in-repository financial RPC caller using that role was identified. The functions' own `auth.uid()`/owner checks still apply when a trusted caller has no user JWT.
+Stage 5.1 behavior checks confirmed the booth-business association, idempotency protection, and safe profile-update policy. The prior broad `profiles_update_own` policy is absent; `Users can update safe profile fields` applies to authenticated users with a role-preserving check except for admins. Its expense/transaction function-body changes and the ACL-only Stage 5.2 change were applied in the authorized order.
 
-### Exact Stage 5.2 permission effects
+The reversible Stage 5.2 down script restores the pre-migration PUBLIC/anon grants and the authenticated grant on `financial_account_id`; it is deliberately not executed because it would reopen anonymous execution. Production migration state should be changed only through an explicitly approved rollback sequence.
 
-Migration `supabase/migrations/20261122094500_stage5_2_rpc_permission_hardening.sql` affects only these ten signatures:
+## Validation and limits
 
-- `is_business_member(uuid)`
-- `is_business_owner(uuid)`
-- `can_operate_booth(uuid, uuid)`
-- `current_user_role()`
-- `is_admin()`
-- `generate_momo_transaction_reference()`
-- `financial_dashboard(uuid, uuid)`
-- `post_momo_transaction(uuid, text)`
-- `reverse_momo_transaction(uuid, text, text)`
-- `financial_account_id(uuid, uuid, text)`
+- `npm ci` succeeded; npm reported 8 dependency vulnerabilities (2 moderate, 5 high, 1 critical).
+- `npm run lint` passed with two existing `react-hooks/exhaustive-deps` warnings (`app/setup/page.tsx:50`, `app/transactions/page.tsx:13`).
+- `npx tsc --noEmit` passed with no diagnostics.
+- `npm run build` passed; Next.js compiled and generated 23 static pages, with the same hook warnings.
+- `git diff --check` passed before this filename/document synchronization; it will be rerun before the follow-up commit.
+- A disposable local PostgreSQL 16 replay and Stage 5.2 ACL regression passed. Checks covered version-order replay, effective privileges, function-body hashes, rollback/re-apply, and owner/assigned-attendant read-path smoke tests. Fixture rows were rolled back; this was not production testing.
+- No live authenticated owner/attendant acceptance accounts were used. Hosted posting/reversal, expense approval/reversal, cashbook/dashboard workflow, and database connectivity remain **untested end-to-end**.
 
-For the first nine, the before privileges are `PUBLIC + anon + authenticated + service_role` (plus owner); proposed privileges are `authenticated + service_role` (plus owner). For `financial_account_id`, before is the same; proposed is `service_role` only (plus owner). `PUBLIC` and `anon` are revoked for all ten; authenticated access is preserved for nine and explicitly removed only from the unguarded, unused `financial_account_id` helper. The Stage 5 expense/cashbook RPCs are already protected and are not changed. No function body, table, policy, row, financial record, or migration ledger entry changes in Stage 5.2.
+## Vercel preview and Stage 6 readiness
 
-Rollback is in `supabase/rollback/20261122094500_stage5_2_rpc_permission_hardening.down.sql`. It restores the previously observed `PUBLIC`/`anon` grants and the prior authenticated grant on `financial_account_id`; service-role grants are unchanged. Running it intentionally reopens anonymous execution and therefore requires an approved rollback decision.
+The initial requested commit's preview `dpl_8EqyghHGLjBfJuKpLMFTpEtABzG6` (`https://ghanaian-creator-streaming-igkuq9io6.vercel.app`) reached `READY`. Unauthenticated `/`, `/dashboard`, and `/api/health` requests redirected to Vercel SSO. No temporary share link was created; authenticated routes, database connectivity, and app acceptance remain unverified. Existing Stage 5.1 previews were also `READY`, but SSO prevented protected-route inspection. The follow-up commit preview must be checked after push.
 
-## Live schema versus recovered history
-
-| Live object/discrepancy | Classification | Notes |
-|---|---|---|
-| `auth` schema and `auth.users` | Expected external/platform-managed | Supabase Auth owns this system schema/table. |
-| `public.profiles`, `handle_new_user`, and `on_auth_user_created` | Reproduced by active migration | Present in `20260828080413_initial_platform_foundation.sql`. |
-| `public.current_user_role()` / `public.is_admin()` and role-aware legacy profile policies | Historical schema drift | Definitions/policy changes match archived `supabase/legacy_migrations/0002_auth_hardening.sql`; no corresponding version exists in the live ten-entry ledger. |
-| `public.payments`, its indexes, RLS policies, `touch_payment_updated_at()` and `payments_set_updated_at` trigger | Historical schema drift | Archived definitions exist in `0003_payments.sql`; removal of the broad update policy is in `0004_payment_update_hardening.sql`. Neither appears in the live migration ledger. Their production creation event cannot be inferred from that ledger. Do not invent migration versions or replay the archive blindly. |
-| Stage 5.1 security changes | Missing migration in production | Repository SQL exists, but the production ledger does not contain version `20261122090128`; it fixes booth/business association checks, idempotency conflict behavior and profile-update authorization. |
-| Stage 5.2 permission hardening | Prepared only | Not applied to production. |
-
-No object was classified as proven manually created. No additional unresolved database object beyond the history/origin gap for the archived legacy objects was identified in this audit. The active ten-migration sequence does not reconstruct every live legacy auth/payment object.
-
-## Validation results
-
-- `npm ci`: completed; npm reported 8 dependency vulnerabilities (2 moderate, 5 high, 1 critical).
-- `npm run lint`: passed with two existing `react-hooks/exhaustive-deps` warnings (`app/setup/page.tsx:50`, `app/transactions/page.tsx:13`).
-- `npx tsc --noEmit`: passed (no diagnostics).
-- `npm run build`: passed; Next.js compiled, lint/type validation completed, and 23 static pages were generated. The same two hook warnings remain.
-- `git diff --check`: passed.
-- Disposable SQL validation: a local PostgreSQL 16 cluster on `127.0.0.1:55432` was bootstrapped with test-only `anon`, `authenticated`, `service_role`, `auth.users`, and `auth.uid()`. The ten recovered migrations plus Stage 5.1 replayed with stop-on-error, then Stage 5.2 was applied locally. Assertions passed for no effective anon/PUBLIC execution on the ten targets, retained authenticated/service-role access as specified, `financial_account_id` authenticated denial, unchanged function-body hashes, rollback restoration, and re-application.
-- The committed read-only assertion script `supabase/tests/stage5_2_rpc_permission_regression.sql` passed against that disposable database.
-- A disposable authenticated-role smoke test passed: an owner read its own dashboard/cashbook/expense summary; an assigned attendant read its booth-scoped versions; cross-business dashboard access and attendant-wide dashboard access were denied; a cross-business booth check returned false. Test fixture rows were rolled back.
-- The prior Stage 5.1 handover records successful local transaction posting/reversal, expense posting/reversal, idempotency, RLS, and profile checks before Stage 5.2. Stage 5.2 did not modify function bodies. These are local tests, not production acceptance tests. No live owner or attendant test account was available/used, and no live financial workflow is claimed tested.
-
-## Vercel previews
-
-Both existing Stage 5.1 previews are `READY` on the existing project:
-
-| Deployment | URL | Commit/ref | State |
-|---|---|---|---|
-| `dpl_9imdRtXAa6XBtqWfKwS6fChgJoYU` | `ghanaian-creator-streaming-p9in1z9lr.vercel.app` | `25b7740b81ec14bbaa7c5bbc702d3d02a28a966d`, `stage5-1-migration-recovery` | `READY` |
-| `dpl_4EpvKEp3CfNYgbMHfH5nDaQafnRi` | `ghanaian-creator-streaming-56pmbopc7.vercel.app` | `9336e9c25f566de775ac0e205f87e1be178ae8b8`, `stage5-1-migration-recovery` | `READY` |
-
-Unauthenticated checks of `/`, `/dashboard`, and `/api/health` on both deployment URLs were redirected to Vercel SSO. Page, database-connectivity, and financial UI acceptance could not be inspected without authorization. No temporary Vercel share link was created (those links are accessible to anyone holding the link for up to 23 hours). The deployments' READY state does not prove authenticated route or database connectivity.
-
-## Remaining blockers and Stage 6 readiness
-
-Production remains exposed to the ten observed anonymous/PUBLIC grants listed above, and the live booth/business association gap remains until Stage 5.1 is reconciled/applied. Stage 5.2 only narrows EXECUTE privileges; it does not repair function behavior. No production migration was applied even after the later request to do so, because the prerequisite migration/order and known authenticated cross-business issue make that action unsafe as-is.
-
-The requested branch/commit push is being handled separately from production schema changes. Stage 6 reconciliation is **not ready to begin** until Stage 5.1/5.2 production migration history and ACL state are reconciled, authenticated owner/attendant acceptance is performed against a safe preview or test environment, and the remaining legacy schema drift is deliberately resolved. No Stage 6 functionality was implemented here.
+Stage 6 reconciliation is **not ready** until the legacy live-schema/history gap is deliberately reconciled and production owner/attendant acceptance has been completed in a safe authorized environment. No Stage 6 functionality was implemented.

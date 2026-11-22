@@ -1,4 +1,4 @@
--- Rollback for 20261122094500_stage5_2_rpc_permission_hardening.sql.
+-- Rollback for 20261122095542_stage5_2_rpc_permission_hardening.sql.
 -- Re-enables the previously observed PUBLIC/anon grants; use only if rolling back is approved.
 
 GRANT EXECUTE ON FUNCTION public.is_business_member(uuid) TO PUBLIC, anon;

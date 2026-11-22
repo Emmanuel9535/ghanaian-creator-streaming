@@ -1,4 +1,4 @@
--- Post-migration ACL regression for 20261122094500_stage5_2_rpc_permission_hardening.sql.
+-- Post-migration ACL regression for 20261122095542_stage5_2_rpc_permission_hardening.sql.
 -- Read-only: run after the migration on an isolated Supabase-compatible PostgreSQL database.
 DO $$
 DECLARE

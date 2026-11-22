@@ -1,10 +1,9 @@
 -- Stage 5.2: least-privilege EXECUTE grants for production financial RPCs.
 -- ACL-only: no function definitions, table data, schema objects, or ledger rows change.
 --
--- IMPORTANT: this migration is ordered after 20261122090128_stage5_1_tenant_idempotency_and_rpc_security.
--- Do not apply it to the current production history until that earlier migration is reconciled
--- and its function-body/policy security fixes are verified. The production ledger did not
--- contain Stage 5.1 at the time this file was prepared.
+-- IMPORTANT: Stage 5.1 was applied first and recorded in production as
+-- 20261122095443_stage5_1_tenant_idempotency_and_rpc_security. This migration was then
+-- recorded as 20261122095542_stage5_2_rpc_permission_hardening; keep filenames aligned.
 --
 -- All functions below retain authenticated/service_role execution except the unguarded,
 -- unused-by-app financial_account_id lookup, which retains trusted service_role only.
