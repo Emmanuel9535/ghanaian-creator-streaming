@@ -5,10 +5,10 @@ export function GET() {
   return NextResponse.json({
     status: "ok",
     service: "momo-ledger",
-    stage: 1,
-    application_shell: "enabled",
-    authentication: "preserved",
-    database: "supabase-connection-preserved",
+    stage: 2,
+    authentication: "supabase_auth",
+    onboarding: "business_booth_opening_balances",
+    database: "supabase_stage_2_migration",
     payments: "deferred",
     paystack_test_configuration_detected: paystackConfigured,
   });

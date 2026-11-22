@@ -3,10 +3,17 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const publicPath = request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/health" || request.nextUrl.pathname === "/api/health" || request.nextUrl.pathname.startsWith("/auth/");
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!url || !anonKey) return response;
+  if (!url || !anonKey) {
+    if (publicPath) return response;
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/auth";
+    loginUrl.searchParams.set("next", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {
@@ -20,7 +27,7 @@ export async function middleware(request: NextRequest) {
   });
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user && request.nextUrl.pathname !== "/auth") {
+  if (!user && !publicPath) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/auth";
     loginUrl.searchParams.set("next", request.nextUrl.pathname);
@@ -29,4 +36,4 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/account/:path*", "/creator/:path*", "/admin/:path*"] };
+export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };

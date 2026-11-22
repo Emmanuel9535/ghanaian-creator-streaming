@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/account";
+  const next = searchParams.get("next") ?? "/setup";
   const cookieStore = cookies();
 
-  if (code) {
+  if (code && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
       cookies: {
         get(name: string) { return cookieStore.get(name)?.value; },
@@ -19,5 +19,5 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(`${origin}${next.startsWith("/") ? next : "/account"}`);
+  return NextResponse.redirect(`${origin}${next.startsWith("/") ? next : "/setup"}`);
 }
