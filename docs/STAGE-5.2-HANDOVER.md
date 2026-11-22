@@ -75,7 +75,7 @@ The reversible Stage 5.2 down script restores the pre-migration PUBLIC/anon gran
 
 ## Vercel preview and Stage 6 readiness
 
-The initial requested commit's preview `dpl_8EqyghHGLjBfJuKpLMFTpEtABzG6` (`https://ghanaian-creator-streaming-igkuq9io6.vercel.app`) reached `READY`. Unauthenticated `/`, `/dashboard`, and `/api/health` requests redirected to Vercel SSO. No temporary share link was created; authenticated routes, database connectivity, and app acceptance remain unverified. Existing Stage 5.1 previews were also `READY`, but SSO prevented protected-route inspection. The follow-up commit preview must be checked after push.
+The initial requested commit's preview `dpl_8EqyghHGLjBfJuKpLMFTpEtABzG6` (`https://ghanaian-creator-streaming-igkuq9io6.vercel.app`) reached `READY`. Unauthenticated `/`, `/dashboard`, and `/api/health` requests redirected to Vercel SSO. No temporary share link was created; authenticated routes, database connectivity, and app acceptance remain unverified. Existing Stage 5.1 previews were also `READY`, but SSO prevented protected-route inspection. The sync follow-up preview reached `READY`; see the push-status section below.
 
 Stage 6 reconciliation is **not ready** until the legacy live-schema/history gap is deliberately reconciled and production owner/attendant acceptance has been completed in a safe authorized environment. No Stage 6 functionality was implemented.
 
