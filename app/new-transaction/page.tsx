@@ -20,6 +20,7 @@ export default function NewTransactionPage() {
   const [saved, setSaved] = useState<{ reference: string; amount: number } | null>(null);
 
   useEffect(() => { async function load() { if (!supabase) { setLoading(false); return; } const { data: { user } } = await supabase.auth.getUser(); if (!user) { setLoading(false); return; }
+    const phoneFromCustomer = new URLSearchParams(window.location.search).get("phone"); if (phoneFromCustomer) setForm((old) => ({ ...old, phone: phoneFromCustomer }));
     const { data: membership } = await supabase.from("business_members").select("business_id,booth_id").eq("user_id", user.id).eq("status", "active").order("created_at", { ascending: true }).limit(1).maybeSingle();
     if (membership) { const [{ data: b }, { data: bt }] = await Promise.all([supabase.from("businesses").select("id,name").eq("id", membership.business_id).maybeSingle(), supabase.from("booths").select("id,name,location").eq("id", membership.booth_id ?? "").maybeSingle()]); setBusiness(b); setBooth(bt); }
     setLoading(false);
