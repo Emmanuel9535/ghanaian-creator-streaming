@@ -3,32 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --sky: #38bdf8;
-  --sky-soft: #e0f2fe;
-  --navy: #0f2742;
-  --canvas: #f8fafc;
-  --text: #172b4d;
-  --success: #16a34a;
-  --warning: #f59e0b;
-  --error: #dc2626;
+  --teal: #004f71;
+  --teal-dark: #004060;
+  --yellow: #ffcb05;
+  --canvas: #f1f3f5;
+  --ink: #173042;
+  --muted: #60666c;
+  --line: #dfe5e8;
+  --success: #16865b;
+  --warning: #a97800;
+  --error: #b42318;
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--canvas); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
-a, button, input, select { transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Trebuchet MS", Poppins, Arial, sans-serif; }
+a, button, input, select, textarea { transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
 button:active, a:active { transform: translateY(1px); }
-:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 
 @layer components {
-  .surface { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
-  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-slate-500; }
-  .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-sm hover:bg-sky-300; }
-  .secondary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:border-sky-300 hover:bg-sky-50; }
-  .field { @apply block text-sm font-semibold text-slate-700; }
+  .surface { @apply rounded-2xl border bg-white shadow-sm; border-color: var(--line); }
+  .eyebrow { @apply text-[11px] font-bold uppercase tracking-[0.16em]; color: var(--muted); }
+  .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm; background: var(--yellow); color: var(--teal-dark); }
+  .primary-button:hover { background: #f5bd00; box-shadow: 0 7px 16px rgba(0,64,96,.14); }
+  .secondary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-bold; border-color: var(--line); color: var(--teal); }
+  .secondary-button:hover { border-color: var(--teal); background: #f4fafc; }
+  .field { @apply block text-sm font-semibold; color: var(--ink); }
   .field > span { @apply mb-2 block; }
-  .field em { @apply font-normal not-italic text-slate-400; }
-  .field input, .field select, .field textarea { @apply min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100; }
+  .field em { @apply font-normal not-italic; color: var(--muted); }
+  .field input, .field select, .field textarea { @apply min-h-11 w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-normal outline-none; border-color: var(--line); color: var(--ink); }
+  .field input::placeholder, .field textarea::placeholder { color: #98a0a5; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,79,113,.11); }
 }
 
 @media (prefers-reduced-motion: reduce) {
