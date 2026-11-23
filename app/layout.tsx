@@ -12,7 +12,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <AppShell>{children}</AppShell>
-        <footer className="border-t border-slate-200 bg-white px-5 py-6 text-sm text-slate-500 lg:pl-72">
+        <footer className="border-t border-[var(--line)] bg-white px-5 py-6 text-sm text-[var(--muted)] lg:pl-72">
           <div className="mx-auto flex max-w-7xl flex-col justify-between gap-2 px-1 sm:flex-row">
             <p>MoMo Ledger · Built for Ghanaian mobile money vendors</p>
             <p>Stage 1 foundation · Supabase and Vercel ready</p>
