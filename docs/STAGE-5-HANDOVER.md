@@ -2,7 +2,7 @@
 
 ## Scope and source
 
-Implemented on branch `stage5-expenses-cashbook`, based on Stage 4.1 commit `66555ba31608cb53a9b39b4d055b7eddf02f839a` (`stage4-1`). This handover covers the expenses workflow, expense dashboard, ledger-backed cashbook, and the Stage 5.1 retry/timezone safety fixes. The approved database migration is applied; this feature branch will be preview-deployed after push. No `main` change or Vercel production promotion is intended.
+Implemented on branch `stage5-expenses-cashbook`, based on Stage 4.1 commit `66555ba31608cb53a9b39b4d055b7eddf02f839a` (`stage4-1`). This handover covers the expenses workflow, expense dashboard, ledger-backed cashbook, and the Stage 5.1 retry/timezone safety fixes. The approved database migration is applied and the branch is preview-deployed. No `main` change or Vercel production promotion was performed.
 
 ## Delivered
 
@@ -23,6 +23,10 @@ This branch adds and applied:
 - `0008_stage5_expense_cashbook_read_rpcs.sql` (live migration `20261122081505 stage5_expense_cashbook_read_rpcs`): authorized expense summary and bounded, ledger-backed cashbook read models.
 - `0009_stage5_rpc_access_hardening.sql` (live migration `20261122081656 stage5_rpc_access_hardening`): removes `PUBLIC`/`anon` execute access from the user-facing Stage 5 RPCs and the report RPCs; explicitly leaves the internal `_post_expense_locked` helper inaccessible to `PUBLIC`, `anon`, `authenticated`, and `service_role`.
 - `0010_stage5_idempotency_and_active_booth_safety.sql` (live migration `20261123110051 stage5_idempotency_and_active_booth_safety`): adds atomic/idempotent first-business creation, durable expense request replay before mutable-state checks, and database rejection of new expense writes/posting for inactive booths. It changes no existing financial rows.
+
+## Vercel preview
+
+The Vercel preview deployment `dpl_SaPSsHpo9NAYzL5mQwxM7JW8YSzt` for commit `e6635059b0b7acaed8ebde47ac53b38daa5b5438` is `READY` on branch `stage5-expenses-cashbook`. Requests to `/`, `/api/health`, `/expenses`, and `/setup` returned HTTP 302 to Vercel SSO. Deployment/build readiness is verified, but page content and authenticated owner/attendant workflows were not inspected because no protected-preview/app login was used. Production was not promoted.
 
 ## Security and consistency verification
 
@@ -49,4 +53,4 @@ A read-only account consistency query found four configured accounts, all with n
 2. Add authenticated acceptance coverage for owner and attendant roles: booth/business isolation, pending/rejected non-impact, exactly-once posting, overdraft restrictions, no effect on transaction principal/commission, and auditable reversal behavior.
 3. If receipt support is required, provision private storage with policies and test owner/attendant access and signed retrieval before enabling upload in the UI.
 4. Review and plan dependency vulnerability remediation as a separate compatible upgrade.
-5. Verify the new Vercel preview after the feature-branch push; the previous preview at base commit `49f0da0` was `READY`, but its root and `/api/health` returned HTTP 302 to Vercel SSO. Without authorized SSO/app-owner credentials, route-level browser smoke testing is blocked. Keep production promotion a separate explicit decision.
+5. Keep production promotion a separate explicit decision; authenticated owner/attendant acceptance testing remains outstanding.
