@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,7 +19,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Trebuchet MS", Poppins, Arial, sans-serif; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Poppins, "Trebuchet MS", Arial, sans-serif; }
 a, button, input, select, textarea { transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
 button:active, a:active { transform: translateY(1px); }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
@@ -40,3 +42,5 @@ button:active, a:active { transform: translateY(1px); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+body:has(.auth-screen) > footer { display: none; }
