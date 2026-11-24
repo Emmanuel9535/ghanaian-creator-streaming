@@ -15,7 +15,7 @@ public final class AlertSyncWorker extends Worker {
     public AlertSyncWorker(@NonNull Context context, @NonNull WorkerParameters params) { super(context, params); }
     @NonNull @Override public Result doWork() {
         Context context = getApplicationContext();
-        android.content.SharedPreferences settings = context.getSharedPreferences("momo-settings", Context.MODE_PRIVATE);
+        android.content.SharedPreferences settings = SecurePrefs.get(context);
         String url = settings.getString("supabase_url", ""), token = settings.getString("access_token", ""), business = settings.getString("business_id", ""), booth = settings.getString("booth_id", ""), device = settings.getString("device_id", "");
         if (url.isEmpty() || token.isEmpty() || business.isEmpty() || booth.isEmpty() || device.isEmpty()) return Result.failure();
         AlertOutbox outbox = new AlertOutbox(context); JSONArray pending = outbox.snapshot();

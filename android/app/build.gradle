@@ -6,4 +6,5 @@ android { namespace 'com.momoledger.companion'; compileSdk 35
 
 dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
 }

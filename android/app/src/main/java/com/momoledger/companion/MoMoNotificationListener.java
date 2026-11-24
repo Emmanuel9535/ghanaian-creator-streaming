@@ -16,7 +16,7 @@ public final class MoMoNotificationListener extends NotificationListenerService 
     @Override public void onCreate() { super.onCreate(); outbox = new AlertOutbox(this); }
     @Override public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn == null || sbn.getNotification() == null) return;
-        SharedPreferences prefs = getSharedPreferences("momo-settings", MODE_PRIVATE);
+        SharedPreferences prefs = SecurePrefs.get(this);
         Set<String> packages = prefs.getStringSet("provider_packages", new HashSet<>());
         if (!packages.contains(sbn.getPackageName())) return;
         AlertParser.Candidate candidate = AlertParser.parse(sbn.getPackageName(), AlertParser.text(sbn.getNotification()), null, sbn.getPostTime());

@@ -4,7 +4,7 @@
 
 This branch is based on the supplied upgraded Vercel deployment branch `momo-transaction-experience` at commit `280a66f`. It adds a separate Android companion module under `android/` and a non-destructive Supabase migration named `20261124030000_automatic_momo_tracking.sql`.
 
-The companion uses Android `NotificationListenerService` only after the user grants notification access. It requires provider package names to be explicitly entered by the user, parses only selected MTN, Telecel/Vodafone, and AT Money notification text, stores evidence in a local outbox, and retries synchronization when connectivity returns. Every event has a deterministic event key and is inserted through an authenticated Supabase RPC with a unique `(business_id, device_id, event_key)` constraint.
+The companion uses Android `NotificationListenerService` only after the user grants notification access. It requires provider package names to be explicitly entered by the user, parses only selected MTN, Telecel/Vodafone, and AT Money notification text, stores evidence in a Keystore-backed encrypted local outbox, and retries synchronization when connectivity returns. Every event has a deterministic event key and is inserted through an authenticated Supabase RPC with a unique `(business_id, device_id, event_key)` constraint. The authenticated access token, workspace settings, provider allowlist, and local evidence are also kept in encrypted Android preferences.
 
 The web control-plane page is `/automatic-tracking`. It describes the review-first behavior and does not claim that provider APIs or automatic success posting exist.
 
@@ -26,7 +26,7 @@ A production Play release still needs a signed Android build, a privacy policy, 
 
 Static repository validation was run against the upgraded web project before this branch was changed. The Android SDK, `adb`, Gradle, and Kotlin compiler were not available in the sandbox, so no APK was built and no physical Android device test was performed. The required tests remain: representative anonymized alerts for all three providers; duplicates and offline replay; notification removal; missing fields; failed and reversal wording; background operation under Android battery restrictions; sync authentication failures; and end-to-end review-to-ledger confirmation on a real device and Supabase project.
 
-The migration was not applied to Supabase in this session. It must be reviewed and applied through the project's migration process before the companion can synchronize. No Vercel project was repointed: the existing project `momo-ledger` is already linked to `Emmanuel9535/momo-ledger`, which is the repository and branch serving the supplied deployment.
+The migration was not applied to Supabase in this session. It must be reviewed and applied through the project's migration process before the companion can synchronize. No Vercel project was repointed: the existing project `momo-ledger` is already linked to `Emmanuel9535/momo-ledger`, which is the repository and branch serving the supplied deployment. The automatic-tracking commit was nevertheless deployed to the existing Vercel production target after a successful Next.js build.
 
 ## Official references
 
