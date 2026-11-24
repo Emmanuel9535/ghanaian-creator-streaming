@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3, Bell, BookOpen, ChevronRight, CircleDollarSign, ClipboardList,
   ContactRound, FileText, Home, Landmark, LogOut, Menu, MoreHorizontal,
-  Receipt, Settings, ShieldCheck, Store, Users, WalletCards, X,
+  Receipt, ReceiptText, Settings, ShieldCheck, Store, Users, WalletCards, X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase";
@@ -18,6 +18,7 @@ const navigation: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Reconciliation", href: "/reconciliation", icon: ShieldCheck },
   { label: "Cashbook", href: "/cashbook", icon: BookOpen },
   { label: "Expenses", href: "/expenses", icon: CircleDollarSign },
+  { label: "Sales & receipts", href: "/sales", icon: ReceiptText },
   { label: "Float management", href: "/float-management", icon: WalletCards },
   { label: "Reports", href: "/reports", icon: BarChart3 },
   { label: "Attendants", href: "/attendants", icon: ContactRound },

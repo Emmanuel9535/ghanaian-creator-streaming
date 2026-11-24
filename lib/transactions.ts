@@ -7,9 +7,10 @@ export const TYPES = [
   { value: "DEPOSIT", label: "Deposit", icon: "↓", description: "Customer sends money" },
   { value: "WITHDRAWAL", label: "Withdrawal", icon: "↑", description: "Pay cash to customer" },
   { value: "AIRTIME", label: "Airtime", icon: "◉", description: "Record airtime purchase" },
+  { value: "DATA_BUNDLE", label: "Data bundle", icon: "◌", description: "Record a data purchase" },
   { value: "BILL_PAYMENT", label: "Bill payment", icon: "▣", description: "Record a bill payment" },
 ] as const;
-export const STATUSES = ["PENDING", "SUCCESSFUL", "FAILED", "REVERSED"] as const;
+export const STATUSES = ["DRAFT", "AWAITING_PROCESSING", "PROCESSING", "SUCCESSFUL", "FAILED", "REVERSED", "CANCELLED"] as const;
 export type TransactionType = typeof TYPES[number]["value"];
 export type Network = typeof NETWORKS[number]["value"];
 
