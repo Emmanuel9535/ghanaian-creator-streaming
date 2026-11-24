@@ -356,10 +356,6 @@ function NewTransactionExperience() {
       setMessage({ kind: "error", text: validationError });
       return;
     }
-    if (type === "DATA_BUNDLE" && status === "SUCCESSFUL") {
-      setMessage({ kind: "error", text: "Data bundle capture is available, but successful ledger posting is paused because the installed accounting rules have no Data bundle treatment. Save it as awaiting processing, or ask the owner to approve a ledger-rule update before posting it as successful." });
-      return;
-    }
     if (!supabase || !business || !booth || business.setup_status !== "complete") {
       setMessage({ kind: "error", text: "A completed business setup and active booth are required before recording a transaction." });
       return;
@@ -567,7 +563,7 @@ function NewTransactionExperience() {
       <main className="space-y-5">
         <section aria-label="Transaction type" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {TYPES.filter((item) => ["DEPOSIT", "WITHDRAWAL", "AIRTIME", "DATA_BUNDLE"].includes(item.value)).map((item) =>
-            <button type="button" key={item.value} aria-pressed={type === item.value} onClick={() => { setType(item.value); setForm((current) => ({ ...current, status: item.value === "DATA_BUNDLE" && current.status === "SUCCESSFUL" ? "AWAITING_PROCESSING" : current.status })); setIsDirty(true); setMessage(null); }} className={`rounded-2xl border p-3 text-left ${type === item.value ? "border-[var(--teal)] bg-[#e8f4f7] shadow-sm" : "border-[var(--line)] bg-white hover:border-[#b8dce7]"}`}>
+            <button type="button" key={item.value} aria-pressed={type === item.value} onClick={() => { setType(item.value); setIsDirty(true); setMessage(null); }} className={`rounded-2xl border p-3 text-left ${type === item.value ? "border-[var(--teal)] bg-[#e8f4f7] shadow-sm" : "border-[var(--line)] bg-white hover:border-[#b8dce7]"}`}>
               <span className="text-xl font-black text-[var(--teal)]">{item.icon}</span><strong className="mt-2 block text-sm text-[var(--teal-dark)]">{item.label}</strong>
             </button>,
           )}
@@ -577,7 +573,7 @@ function NewTransactionExperience() {
           <div className="flex items-center gap-2 border-b border-[var(--line)] pb-4"><ShieldCheck size={18} className="text-[var(--teal)]" /><div><h2 className="section-title">Customer request</h2><p className="text-xs text-[var(--muted)]">A customer record is matched or registered within this business when you save. <Link href="/customers" className="font-bold text-[var(--teal)] underline">Register without a transaction</Link></p></div></div>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="field"><span>Network / provider</span><select value={form.network} onChange={(event) => change("network", event.target.value)}>{NETWORKS.map((network) => <option key={network.value} value={network.value}>{network.label}</option>)}</select></label>
-            <label className="field"><span>Record status</span><select value={form.status} onChange={(event) => change("status", event.target.value)}>{STATUSES.filter((status) => CAPTURE_STATUSES.includes(status as CaptureStatus) && !(type === "DATA_BUNDLE" && status === "SUCCESSFUL")).map((status) => <option key={status} value={status}>{status === "SUCCESSFUL" ? "Successful · manually confirmed" : status.replaceAll("_", " ")}</option>)}</select></label>
+            <label className="field"><span>Record status</span><select value={form.status} onChange={(event) => change("status", event.target.value)}>{STATUSES.filter((status) => CAPTURE_STATUSES.includes(status as CaptureStatus)).map((status) => <option key={status} value={status}>{status === "SUCCESSFUL" ? "Successful · manually confirmed" : status.replaceAll("_", " ")}</option>)}</select></label>
           </div>
           <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
             <label className="field"><span>Customer phone number</span><input required inputMode="tel" autoComplete="tel" placeholder="024 123 4567" value={form.phone} onChange={(event) => change("phone", event.target.value)} /></label>
