@@ -1,0 +1,9 @@
+plugins { id 'com.android.application' }
+
+android { namespace 'com.momoledger.companion'; compileSdk 35
+    defaultConfig { applicationId 'com.momoledger.companion'; minSdk 26; targetSdk 35; versionCode 1; versionName '0.1.0' }
+}
+
+dependencies {
+    implementation 'androidx.work:work-runtime:2.9.1'
+}

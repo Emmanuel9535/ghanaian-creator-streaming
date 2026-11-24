@@ -22,6 +22,7 @@ const navigation: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Float management", href: "/float-management", icon: WalletCards },
   { label: "Reports", href: "/reports", icon: BarChart3 },
   { label: "Attendants", href: "/attendants", icon: ContactRound },
+  { label: "Automatic tracking", href: "/automatic-tracking", icon: Bell },
 ];
 
 const moreNavigation = [
