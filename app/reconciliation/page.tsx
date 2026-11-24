@@ -49,7 +49,7 @@ export default function ReconciliationPage() {
     const membershipData = membership.data;
     const b = Array.isArray(membershipData.businesses) ? membershipData.businesses[0] : membershipData.businesses;
     setBusiness(b as { id: string; name: string }); setRole(membershipData.role);
-    const boothQuery = supabase.from("booths").select("id,name").eq("business_id", membershipData.business_id).eq("status", "ACTIVE").order("name");
+    const boothQuery = supabase.from("booths").select("id,name").eq("business_id", membershipData.business_id).eq("status", "active").order("name");
     const boothResult = await boothQuery;
     const available = (boothResult.data ?? []).filter((booth) => membershipData.role === "OWNER" || booth.id === membershipData.booth_id);
     setBooths(available); if (!boothId && available[0]) setBoothId(available[0].id);
