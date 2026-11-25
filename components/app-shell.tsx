@@ -170,7 +170,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 className={`relative flex min-h-12 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${isCurrent ? "text-[var(--teal)]" : "text-[var(--ink)]"}`}
               >
                 <span className={isRecord
-                  ? `-mt-5 grid h-11 w-11 place-items-center rounded-full border-[3px] border-white ${isCurrent ? "bg-[var(--yellow)] text-[var(--teal-dark)]" : "bg-[var(--teal)] text-white"} shadow-md`
+                  ? "-mt-5 grid h-11 w-11 place-items-center rounded-full border-[3px] border-white bg-[var(--yellow)] text-[var(--teal-dark)] shadow-md"
                   : "grid h-6 w-6 place-items-center"}>
                   <Icon size={isRecord ? 22 : 20} strokeWidth={isCurrent ? 2 : 1.8} />
                 </span>
