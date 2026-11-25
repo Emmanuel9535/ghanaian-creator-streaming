@@ -39,7 +39,7 @@ export default function SetupPage() {
       setBusiness(found); setBusinessForm({ ...found, digital_address: found.digital_address ?? "" });
       const { data: booths } = await supabase.from("booths").select("id,name,location,description").eq("business_id", found.id).order("created_at", { ascending: true }).limit(1);
       const foundBooth = booths?.[0] as Booth | undefined;
-      if (foundBooth) { setBooth(foundBooth); setBoothForm({ name: foundBooth.name, location: foundBooth.location, description: foundBooth.description ?? "" }); }
+      if (foundBooth) { setBooth(foundBooth); setBoothForm({ name: foundBooth.name, location: foundBooth.location, description: foundBooth.description ?? "" }); await supabase.from("business_members").update({ booth_id: foundBooth.id }).eq("business_id", found.id).eq("user_id", user.id).eq("status", "active"); }
       const { data: cash } = await supabase.from("business_opening_balances").select("physical_cash_pesewas").eq("business_id", found.id).maybeSingle();
       const { data: floats } = foundBooth ? await supabase.from("booth_opening_balances").select("network,amount_pesewas").eq("booth_id", foundBooth.id) : { data: [] as { network: string; amount_pesewas: number }[] };
       if (cash) { const map: Balances = { physical_cash_pesewas: cash.physical_cash_pesewas, MTN: 0, TELECEL: 0, AT: 0 }; (floats ?? []).forEach(item => { map[item.network] = item.amount_pesewas; }); setBalances(map); setBalanceForm({ physical: pesewasToAmount(map.physical_cash_pesewas), mtn: pesewasToAmount(map.MTN), telecel: pesewasToAmount(map.TELECEL), at: pesewasToAmount(map.AT) }); }
@@ -68,7 +68,7 @@ export default function SetupPage() {
   async function saveBooth(event: FormEvent) {
     event.preventDefault(); if (!supabase || !userId || !business) return; setNotice(null); if (boothForm.name.trim().length < 2 || boothForm.location.trim().length < 2) { setNotice({ type: "error", text: "Add a booth name and location." }); return; }
     setBusy(true); const result = booth ? await supabase.from("booths").update(boothForm).eq("id", booth.id).select("id,name,location,description").single() : await supabase.from("booths").insert({ ...boothForm, business_id: business.id }).select("id,name,location,description").single();
-    if (result.error) setNotice({ type: "error", text: result.error.message }); else { setBooth(result.data); await supabase.from("businesses").update({ setup_status: "booth" }).eq("id", business.id); setBusiness({ ...business, setup_status: "booth" }); setStep(2); }
+    if (result.error) setNotice({ type: "error", text: result.error.message }); else { const membership = await supabase.from("business_members").update({ booth_id: result.data.id }).eq("business_id", business.id).eq("user_id", userId).eq("status", "active"); if (membership.error) setNotice({ type: "error", text: membership.error.message }); else { setBooth(result.data); await supabase.from("businesses").update({ setup_status: "booth" }).eq("id", business.id); setBusiness({ ...business, setup_status: "booth" }); setStep(2); } }
     setBusy(false);
   }
   async function saveBalances(event: FormEvent) {
