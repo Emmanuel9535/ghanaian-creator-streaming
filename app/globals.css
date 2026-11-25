@@ -93,6 +93,9 @@ button:active, a:active { transform: translateY(1px); }
   .data-table th { @apply px-4 py-3 text-[11px] font-semibold uppercase tracking-[.08em]; color: var(--muted); background: #F7F9FA; }
   .data-table td { @apply border-b px-4 py-3.5 align-middle; border-color: var(--line); }
   .data-table tbody tr:hover { background: #F8FBFC; }
+  .cashbook-ledger-table th { color: var(--teal-dark); background: #fff; }
+  .cashbook-ledger-table td { background: #fff; }
+  .cashbook-ledger-table tbody tr:nth-child(odd) td { background: #fbfcfc; }
   .status-pill { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold; }
 }
 
