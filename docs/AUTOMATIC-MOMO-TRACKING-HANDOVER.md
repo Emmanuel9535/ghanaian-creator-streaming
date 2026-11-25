@@ -39,3 +39,11 @@ The migration is now applied to Supabase project `txeobytsmfjbweoyetqh` as `auto
 [5]: https://telecel.com.gh/personal/telecel-cash/merchant-registration/ "Telecel Ghana merchant registration"
 [6]: https://telecel.com.gh/agent/login/ "Telecel Ghana agent portal"
 [7]: https://www.at.com.gh/learn-more/-terms-%26-conditions-for-atmoney "AT Money terms and conditions"
+
+## Daily fresh openings
+
+The daily-opening workflow is available at `/opening` and is linked from reconciliation as **Fresh opening**. It uses the append-only `daily_openings` table with one record per booth and business date, storing physical cash plus MTN, Telecel, and AT float in pesewas. This is deliberately separate from the immutable onboarding tables `business_opening_balances` and `booth_opening_balances`, so recording today cannot overwrite yesterday's opening or a historical close.
+
+An owner or booth-assigned active agent can create an opening for the booth they are authorised to use. The same authenticated workflow can edit that booth/date record when a handover count or booth assignment was entered incorrectly. Updates are performed through `update_daily_opening`, preserve the operating date, enforce non-negative balances and booth membership, and write the previous values to `daily_opening_edit_history` before changing the current record. There is no delete path. Reconciliation remains a separate close process; the opening page displays historical daily openings, while reconciliation preserves its own cutoff-based expected values and approval lock.
+
+The daily-opening migration was applied to Supabase project `txeobytsmfjbweoyetqh` as `daily_openings`, followed by `editable_daily_openings` and a corrective function-definition migration. Metadata verification confirmed the table RPCs exist with the expected signatures. The web lint/build passes; the repository retains the three pre-existing hook warnings in reports, sales, and setup.
