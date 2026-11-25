@@ -116,6 +116,19 @@ button:active, a:active { transform: translateY(1px); }
 .lucide { stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .mobile-bottom-nav { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); }
 
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  body { background: #fff !important; }
+  body:has(.print-report) header,
+  body:has(.print-report) aside,
+  body:has(.print-report) nav { display: none !important; }
+  body:has(.print-report) main { max-width: none !important; padding: 0 !important; }
+  .print-report { border: 0 !important; box-shadow: none !important; }
+  .print-report .data-table { font-size: 9px; }
+  .print-report .data-table th,
+  .print-report .data-table td { padding: 5px 6px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
