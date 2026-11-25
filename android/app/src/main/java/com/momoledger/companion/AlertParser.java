@@ -21,6 +21,7 @@ final class AlertParser {
         String provider = lower.contains("mtn") ? "MTN" : lower.contains("telecel") || lower.contains("vodafone") ? "TELECEL" : lower.contains("at money") || lower.contains("airteltigo") ? "AT" : "UNKNOWN";
         if (provider.equals("UNKNOWN")) return null;
         String type = lower.contains("withdraw") || lower.contains("cash out") ? "WITHDRAWAL" : lower.contains("airtime") ? "AIRTIME" : lower.contains("data") ? "DATA_BUNDLE" : lower.contains("bill") ? "BILL_PAYMENT" : lower.contains("deposit") || lower.contains("received") || lower.contains("credited") ? "DEPOSIT" : null;
+        String observedStatus = lower.contains("revers") ? "REVERSED" : lower.contains("fail") || lower.contains("declin") ? "FAILED" : lower.contains("pending") || lower.contains("processing") ? "PENDING" : lower.contains("success") || lower.contains("completed") || lower.contains("approved") || lower.contains("received") || lower.contains("credited") ? "SUCCESSFUL" : "UNKNOWN";
         Matcher amountMatcher = AMOUNT.matcher(source);
         Long amount = amountMatcher.find() ? pesewas(amountMatcher.group(1)) : null;
         Matcher phoneMatcher = PHONE.matcher(source);
@@ -30,7 +31,7 @@ final class AlertParser {
         String confidence = amount != null && type != null && reference != null ? "HIGH" : amount != null && type != null ? "MEDIUM" : "LOW";
         String reason = confidence.equals("HIGH") ? "Parsed provider, amount, type, and reference; human confirmation still required" : "Notification is incomplete or ambiguous; review before recording";
         String eventKey = sha256(packageName + "|" + postedAt + "|" + source);
-        return new Candidate(packageName, provider, type, amount, phone, reference, confidence, reason, postedAt, eventKey);
+        return new Candidate(packageName, provider, type, observedStatus, amount, phone, reference, confidence, reason, postedAt, eventKey);
     }
 
     static String text(Notification notification) {
@@ -48,9 +49,9 @@ final class AlertParser {
     }
 
     static final class Candidate {
-        final String sourcePackage, provider, type, phone, reference, confidence, reason, eventKey;
+        final String sourcePackage, provider, type, observedStatus, phone, reference, confidence, reason, eventKey;
         final Long amount;
         final long postedAt;
-        Candidate(String sourcePackage, String provider, String type, Long amount, String phone, String reference, String confidence, String reason, long postedAt, String eventKey) { this.sourcePackage = sourcePackage; this.provider = provider; this.type = type; this.amount = amount; this.phone = phone; this.reference = reference; this.confidence = confidence; this.reason = reason; this.postedAt = postedAt; this.eventKey = eventKey; }
+        Candidate(String sourcePackage, String provider, String type, String observedStatus, Long amount, String phone, String reference, String confidence, String reason, long postedAt, String eventKey) { this.sourcePackage = sourcePackage; this.provider = provider; this.type = type; this.observedStatus = observedStatus; this.amount = amount; this.phone = phone; this.reference = reference; this.confidence = confidence; this.reason = reason; this.postedAt = postedAt; this.eventKey = eventKey; }
     }
 }
