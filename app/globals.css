@@ -1,43 +1,116 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --teal: #004f71;
+  --teal: #004F71;
   --teal-dark: #004060;
-  --yellow: #ffcb05;
-  --canvas: #f1f3f5;
-  --ink: #173042;
-  --muted: #60666c;
-  --line: #dfe5e8;
-  --success: #16865b;
-  --warning: #a97800;
-  --error: #b42318;
+  --yellow: #FFCB05;
+  --canvas: #F1F1F1;
+  --ink: #62666A;
+  --muted: #62666A;
+  --line: #E1E6E8;
+  --success: #16865B;
+  --warning: #A97800;
+  --error: #B42318;
+  --surface-shadow: 0 8px 28px rgba(0, 64, 96, .065);
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Poppins, "Trebuchet MS", Arial, sans-serif; }
-a, button, input, select, textarea { transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+html { scroll-behavior: smooth; background: var(--canvas); }
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-nunito-sans), "Nunito Sans", "Trebuchet MS", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+a, button, input, select, textarea {
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
 button:active, a:active { transform: translateY(1px); }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+::selection { color: var(--teal-dark); background: rgba(255, 203, 5, .38); }
+
+@layer base {
+  h1, h2, h3, h4 { color: var(--teal-dark); font-weight: 650; letter-spacing: -.018em; }
+  p { text-wrap: pretty; }
+  input, select, textarea, button { font: inherit; }
+}
 
 @layer components {
-  .surface { @apply rounded-2xl border bg-white shadow-sm; border-color: var(--line); }
-  .eyebrow { @apply text-[11px] font-bold uppercase tracking-[0.16em]; color: var(--muted); }
-  .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm; background: var(--yellow); color: var(--teal-dark); }
-  .primary-button:hover { background: #f5bd00; box-shadow: 0 7px 16px rgba(0,64,96,.14); }
-  .secondary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-bold; border-color: var(--line); color: var(--teal); }
-  .secondary-button:hover { border-color: var(--teal); background: #f4fafc; }
+  .surface {
+    @apply rounded-2xl border bg-white;
+    border-color: var(--line);
+    box-shadow: var(--surface-shadow);
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em];
+    color: var(--muted);
+  }
+  .page-title {
+    @apply mt-1 text-2xl font-semibold tracking-tight sm:text-3xl;
+    color: var(--teal-dark);
+    line-height: 1.18;
+  }
+  .page-subtitle { @apply mt-2 max-w-2xl text-sm leading-6; color: var(--muted); }
+  .section-title { @apply text-lg font-semibold tracking-tight sm:text-xl; color: var(--teal-dark); }
+  .primary-button {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold;
+    background: var(--yellow);
+    color: var(--teal-dark);
+    box-shadow: 0 3px 10px rgba(0, 64, 96, .08);
+  }
+  .primary-button:hover { background: #F5BD00; box-shadow: 0 7px 18px rgba(0, 64, 96, .14); }
+  .primary-button:disabled, .secondary-button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
+  .secondary-button {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-semibold;
+    border-color: var(--line);
+    color: var(--teal);
+  }
+  .secondary-button:hover { border-color: rgba(0, 79, 113, .32); background: #F7FAFB; }
   .field { @apply block text-sm font-semibold; color: var(--ink); }
   .field > span { @apply mb-2 block; }
   .field em { @apply font-normal not-italic; color: var(--muted); }
-  .field input, .field select, .field textarea { @apply min-h-11 w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-normal outline-none; border-color: var(--line); color: var(--ink); }
-  .field input::placeholder, .field textarea::placeholder { color: #98a0a5; }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,79,113,.11); }
+  .field input, .field select, .field textarea, .field-input {
+    @apply min-h-11 w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-normal outline-none;
+    border-color: var(--line);
+    color: var(--ink);
+  }
+  .field-label { @apply mb-2 block text-sm font-semibold; color: var(--ink); }
+  .field input::placeholder, .field textarea::placeholder, .field-input::placeholder { color: #8B969B; }
+  .field input:focus, .field select:focus, .field textarea:focus, .field-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0, 79, 113, .11);
+  }
+  .data-table { @apply w-full border-collapse text-left text-sm; }
+  .data-table th { @apply px-4 py-3 text-[11px] font-semibold uppercase tracking-[.08em]; color: var(--muted); background: #F7F9FA; }
+  .data-table td { @apply border-b px-4 py-3.5 align-middle; border-color: var(--line); }
+  .data-table tbody tr:hover { background: #F8FBFC; }
+  .status-pill { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold; }
 }
+
+/* Keep the existing slate-heavy expense and cashbook screens inside the shared neutral system. */
+[class~="text-slate-950"], [class~="text-slate-900"], [class~="text-slate-800"], [class~="text-slate-700"] { color: var(--ink) !important; }
+[class~="text-slate-600"], [class~="text-slate-500"], [class~="text-slate-400"] { color: var(--muted) !important; }
+[class~="bg-slate-50"], [class~="bg-slate-100"] { background-color: var(--canvas) !important; }
+[class~="border-slate-100"], [class~="border-slate-200"], [class~="border-slate-300"] { border-color: var(--line) !important; }
+[class~="divide-slate-100"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--line) !important; }
+[class~="text-sky-900"], [class~="text-sky-800"], [class~="text-sky-700"] { color: var(--teal) !important; }
+[class~="bg-sky-50"] { background-color: #EEF6F8 !important; }
+[class~="bg-sky-400"] { background-color: var(--teal) !important; }
+[class~="border-sky-200"] { border-color: #C7DFE7 !important; }
+
+/* Tailwind's extra-heavy weights are softened to match the rounded, uncluttered reference. */
+.font-black, .font-extrabold { font-weight: 700 !important; }
+.font-bold, .font-semibold { font-weight: 600 !important; }
+.lucide { stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-bottom-nav { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }

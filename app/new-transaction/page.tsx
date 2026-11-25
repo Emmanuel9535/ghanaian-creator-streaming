@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { Clipboard, ExternalLink, Save, Send, ShieldCheck } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Clipboard, ExternalLink, Phone, Receipt, Save, Send, ShieldCheck, Wifi } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { resolveActiveWorkspace } from "@/lib/workspace";
 import {
@@ -16,6 +17,14 @@ import {
   TYPES,
   type TransactionType,
 } from "@/lib/transactions";
+
+const transactionTypeIcons: Record<TransactionType, LucideIcon> = {
+  DEPOSIT: ArrowDownLeft,
+  WITHDRAWAL: ArrowUpRight,
+  AIRTIME: Phone,
+  DATA_BUNDLE: Wifi,
+  BILL_PAYMENT: Receipt,
+};
 
 type CaptureStatus = "DRAFT" | "AWAITING_PROCESSING" | "PROCESSING" | "SUCCESSFUL" | "FAILED" | "CANCELLED";
 type FormState = {
@@ -562,11 +571,15 @@ function NewTransactionExperience() {
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <main className="space-y-5">
         <section aria-label="Transaction type" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {TYPES.filter((item) => ["DEPOSIT", "WITHDRAWAL", "AIRTIME", "DATA_BUNDLE"].includes(item.value)).map((item) =>
-            <button type="button" key={item.value} aria-pressed={type === item.value} onClick={() => { setType(item.value); setIsDirty(true); setMessage(null); }} className={`rounded-2xl border p-3 text-left ${type === item.value ? "border-[var(--teal)] bg-[#e8f4f7] shadow-sm" : "border-[var(--line)] bg-white hover:border-[#b8dce7]"}`}>
-              <span className="text-xl font-black text-[var(--teal)]">{item.icon}</span><strong className="mt-2 block text-sm text-[var(--teal-dark)]">{item.label}</strong>
-            </button>,
-          )}
+          {TYPES.filter((item) => ["DEPOSIT", "WITHDRAWAL", "AIRTIME", "DATA_BUNDLE"].includes(item.value)).map((item) => {
+            const Icon = transactionTypeIcons[item.value];
+            return (
+              <button type="button" key={item.value} aria-pressed={type === item.value} onClick={() => { setType(item.value); setIsDirty(true); setMessage(null); }} className={`rounded-2xl border p-3 text-left ${type === item.value ? "border-[var(--teal)] bg-[#e8f4f7] shadow-sm" : "border-[var(--line)] bg-white hover:border-[#b8dce7]"}`}>
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#e8f4f7] text-[var(--teal)]"><Icon size={21} strokeWidth={1.8} /></span>
+                <strong className="mt-2 block text-sm font-semibold text-[var(--teal-dark)]">{item.label}</strong>
+              </button>
+            );
+          })}
         </section>
 
         <section className="surface space-y-5 p-5 sm:p-7">
