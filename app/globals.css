@@ -7,8 +7,8 @@
   --teal-dark: #004060;
   --yellow: #FFCB05;
   --canvas: #F1F1F1;
-  --ink: #62666A;
-  --muted: #62666A;
+  --ink: #3B4449;
+  --muted: #555D62;
   --line: #E1E6E8;
   --success: #16865B;
   --warning: #A97800;
@@ -67,7 +67,8 @@ button:active, a:active { transform: translateY(1px); }
     box-shadow: 0 3px 10px rgba(0, 64, 96, .08);
   }
   .primary-button:hover { background: #F5BD00; box-shadow: 0 7px 18px rgba(0, 64, 96, .14); }
-  .primary-button:disabled, .secondary-button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
+  .primary-button:disabled { cursor: not-allowed; opacity: .75; transform: none; }
+  .secondary-button:disabled { cursor: not-allowed; transform: none; border-color: #C7DFE7; background: #F7FAFB; color: var(--teal); opacity: 1; }
   .secondary-button {
     @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-semibold;
     border-color: var(--line);
@@ -76,14 +77,14 @@ button:active, a:active { transform: translateY(1px); }
   .secondary-button:hover { border-color: rgba(0, 79, 113, .32); background: #F7FAFB; }
   .field { @apply block text-sm font-semibold; color: var(--ink); }
   .field > span { @apply mb-2 block; }
-  .field em { @apply font-normal not-italic; color: var(--muted); }
+  .field em { @apply font-medium not-italic; color: #535B60; }
   .field input, .field select, .field textarea, .field-input {
-    @apply min-h-11 w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-normal outline-none;
+    @apply min-h-11 w-full rounded-xl border bg-white px-3 py-2.5 text-sm font-medium outline-none;
     border-color: var(--line);
     color: var(--ink);
   }
   .field-label { @apply mb-2 block text-sm font-semibold; color: var(--ink); }
-  .field input::placeholder, .field textarea::placeholder, .field-input::placeholder { color: #8B969B; }
+  .field input::placeholder, .field textarea::placeholder, .field-input::placeholder { color: #687277; font-weight: 500; opacity: 1; }
   .field input:focus, .field select:focus, .field textarea:focus, .field-input:focus {
     border-color: var(--teal);
     box-shadow: 0 0 0 3px rgba(0, 79, 113, .11);
@@ -105,6 +106,9 @@ button:active, a:active { transform: translateY(1px); }
 [class~="bg-sky-50"] { background-color: #EEF6F8 !important; }
 [class~="bg-sky-400"] { background-color: var(--teal) !important; }
 [class~="border-sky-200"] { border-color: #C7DFE7 !important; }
+
+/* Keep supporting copy on the brand's deep teal surfaces bright enough to read. */
+[class~="text-white/60"], [class~="text-white/65"], [class~="text-white/70"], [class~="text-white/75"] { color: rgba(255, 255, 255, .9) !important; }
 
 /* Tailwind's extra-heavy weights are softened to match the rounded, uncluttered reference. */
 .font-black, .font-extrabold { font-weight: 700 !important; }

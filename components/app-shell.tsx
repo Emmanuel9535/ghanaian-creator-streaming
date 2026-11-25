@@ -167,7 +167,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={href}
                 href={href}
                 aria-current={isCurrent ? "page" : undefined}
-                className={`relative flex min-h-12 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold ${isCurrent ? "text-[var(--teal)]" : "text-[var(--muted)]"}`}
+                className={`relative flex min-h-12 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${isCurrent ? "text-[var(--teal)]" : "text-[var(--ink)]"}`}
               >
                 <span className={isRecord
                   ? `-mt-5 grid h-11 w-11 place-items-center rounded-full border-[3px] border-white ${isCurrent ? "bg-[var(--yellow)] text-[var(--teal-dark)]" : "bg-[var(--teal)] text-white"} shadow-md`
@@ -183,7 +183,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             type="button"
             aria-expanded={mobileMore}
             onClick={() => setMobileMore((open) => !open)}
-            className={`flex min-h-12 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold ${mobileMore || moreIsActive ? "text-[var(--teal)]" : "text-[var(--muted)]"}`}
+            className={`flex min-h-12 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${mobileMore || moreIsActive ? "text-[var(--teal)]" : "text-[var(--ink)]"}`}
           >
             <MoreHorizontal size={20} strokeWidth={1.8} />
             More
