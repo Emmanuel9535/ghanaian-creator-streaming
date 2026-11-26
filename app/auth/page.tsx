@@ -4,6 +4,7 @@ import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { getAppUrl } from "@/lib/app-url";
 
 function validPhone(value: string) { return /^(?:\+?[1-9]\d{7,14}|0\d{9})$/.test(value.replace(/[\s()-]/g, "")); }
 function validPassword(value: string) { return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(value); }
@@ -37,7 +38,7 @@ function AuthForm() {
     if (isReset && !validPassword(password)) return setNotice({ type: "error", text: "Use at least 8 characters with at least one letter and one number." });
     setBusy(true);
     if (isRegister) {
-      const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim(), phone: phone.trim() }, emailRedirectTo: `${window.location.origin}/auth/callback?next=/setup` } });
+      const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim(), phone: phone.trim() }, emailRedirectTo: `${getAppUrl()}/auth/callback?next=/setup` } });
       setBusy(false);
       if (error) { setNotice({ type: "error", text: error.message }); return; }
       if (data.session) window.location.href = "/setup";
@@ -45,7 +46,7 @@ function AuthForm() {
       return;
     }
     if (isRecovery) {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/auth?mode=reset` });
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${getAppUrl()}/auth?mode=reset` });
       setBusy(false); setNotice(error ? { type: "error", text: error.message } : { type: "success", text: "If an account exists for that email, a password reset link is on its way." }); return;
     }
     if (isReset) {
