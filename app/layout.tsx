@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
+import { PwaRegister } from "@/components/pwa-register";
 
 export const metadata: Metadata = {
   title: "MoMo Ledger | Mobile Money business control",
   description: "Offline-first transaction recording and business management for Ghanaian MoMo vendors.",
+  icons: {
+    icon: "/icons/favicon.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "MoMo Ledger",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -12,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <AppShell>{children}</AppShell>
+        <PwaRegister />
         <footer className="border-t border-[var(--line)] bg-white px-5 py-6 text-sm text-[var(--muted)] lg:pl-72">
           <div className="mx-auto flex max-w-7xl flex-col justify-between gap-2 px-1 sm:flex-row">
             <p>MoMo Ledger · Built for Ghanaian mobile money vendors</p>
