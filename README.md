@@ -2,13 +2,13 @@
 
 MoMo Ledger is an offline-first Mobile Money transaction recording and business management application for Ghanaian MoMo vendors. It is designed for MTN Mobile Money, Telecel Cash and AT Money workflows.
 
-## Stage 2 foundation
+## Current capabilities
 
-Stage 2 adds secure Supabase Auth owner registration, login, logout, password recovery/reset, protected workspace routes, a resumable business setup wizard, first-booth creation, integer-pesewa opening balances, business settings, and pending attendant invitations. Transaction posting, reconciliation and offline synchronization remain deferred to later stages.
+MoMo Ledger includes secure Supabase Auth, resumable business setup, first-booth creation, integer-pesewa opening balances, operational transaction recording, settled financial postings, professional cashbook reads, and Float Management. Float Management keeps physical cash and each network account separate, supports atomic transfers, low-float thresholds, searchable movement history, idempotent retries, and provisional offline recording with automatic sync.
 
 ## Existing infrastructure
 
-The project is a Next.js 14 App Router application using TypeScript, React, Tailwind CSS and Supabase. Existing profile/payment migrations, middleware, server utilities and Paystack test-mode routes are preserved. Stage 2 adds `supabase/migrations/0005_business_onboarding.sql` without deleting or altering existing tables. Never commit `.env.local`, service-role keys, Paystack secrets or other credentials.
+The project is a Next.js 14 App Router application using TypeScript, React, Tailwind CSS and Supabase. Existing profile/payment migrations, middleware, server utilities and Paystack test-mode routes are preserved. Float Management extends the live ledger with `supabase/migrations/0007_float_management.sql` without deleting or altering historical transactions or opening balances. Never commit `.env.local`, service-role keys, Paystack secrets or other credentials.
 
 ## Local setup
 
@@ -20,6 +20,6 @@ npm run dev
 
 Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local` to exercise authentication and onboarding locally. The JSON health endpoints are available at `/health` and `/api/health`.
 
-## Next stage
+## Financial safety
 
-Continue with **Stage 3: CORE MOMO TRANSACTION RECORDING**. Read [`docs/STAGE-2-HANDOVER.md`](docs/STAGE-2-HANDOVER.md) for the exact schema, RLS decisions, migration status and authenticated-test limitations.
+All financial amounts are integer pesewas. Historical postings are append-only. Movement retries use a unique idempotency key, transfers debit and credit both accounts in one database transaction, and write RPCs enforce authenticated business/booth permissions.
