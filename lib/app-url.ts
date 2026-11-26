@@ -6,6 +6,5 @@ export const STABLE_APP_URL = "https://momo-ledger-ghana-first-streaming-network
  * opened later on a device where localhost refers to that device itself.
  */
 export function getAppUrl() {
-  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/, "");
-  return configured && /^https:\/\//i.test(configured) ? configured : STABLE_APP_URL;
+  return STABLE_APP_URL;
 }
