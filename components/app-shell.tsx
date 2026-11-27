@@ -19,7 +19,7 @@ const navigation: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Cashbook", href: "/cashbook", icon: BookOpen },
   { label: "Expenses", href: "/expenses", icon: CircleDollarSign },
   { label: "Sales & receipts", href: "/sales", icon: ReceiptText },
-  { label: "Float management · Future", href: "/float-management", icon: WalletCards },
+  { label: "Float management", href: "/float-management", icon: WalletCards },
   { label: "Reports", href: "/reports", icon: BarChart3 },
   { label: "Attendants · Future", href: "/attendants", icon: ContactRound },
 ];

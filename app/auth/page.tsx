@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Bell, Camera, Megaphone, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase";
+import { getAppUrl } from "@/lib/app-url";
 
 function validPhone(value: string) { return /^(?:\+?[1-9]\d{7,14}|0\d{9})$/.test(value.replace(/[\s()-]/g, "")); }
 function validPassword(value: string) { return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(value); }
@@ -25,8 +26,8 @@ function AuthForm() {
     if (isRegister) { if (fullName.trim().length < 2) return setNotice({ type: "error", text: "Enter your full name." }); if (!validPhone(phone)) return setNotice({ type: "error", text: "Enter a valid Ghanaian phone number, such as 024 123 4567, or a supported international format." }); if (!validPassword(password)) return setNotice({ type: "error", text: "Use at least 8 characters with at least one letter and one number." }); if (password !== confirmation) return setNotice({ type: "error", text: "Passwords do not match." }); }
     if (isReset && !validPassword(password)) return setNotice({ type: "error", text: "Use at least 8 characters with at least one letter and one number." });
     setBusy(true);
-    if (isRegister) { const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim(), phone: phone.trim() }, emailRedirectTo: `${window.location.origin}/auth/callback?next=/setup` } }); setBusy(false); if (error) { setNotice({ type: "error", text: error.message }); return; } if (data.session) window.location.href = "/setup"; else { setMode("login"); setNotice({ type: "success", text: "Account created. Check your email to verify your address, then log in to continue setup." }); } return; }
-    if (isRecovery) { const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/auth?mode=reset` }); setBusy(false); setNotice(error ? { type: "error", text: error.message } : { type: "success", text: "If an account exists for that email, a password reset link is on its way." }); return; }
+    if (isRegister) { const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { data: { full_name: fullName.trim(), phone: phone.trim() }, emailRedirectTo: `${getAppUrl()}/auth/callback?next=/setup` } }); setBusy(false); if (error) { setNotice({ type: "error", text: error.message }); return; } if (data.session) window.location.href = "/setup"; else { setMode("login"); setNotice({ type: "success", text: "Account created. Check your email to verify your address, then log in to continue setup." }); } return; }
+    if (isRecovery) { const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${getAppUrl()}/auth?mode=reset` }); setBusy(false); setNotice(error ? { type: "error", text: error.message } : { type: "success", text: "If an account exists for that email, a password reset link is on its way." }); return; }
     if (isReset) { const { error } = await supabase.auth.updateUser({ password }); setBusy(false); setNotice(error ? { type: "error", text: error.message } : { type: "success", text: "Password updated. You can continue to your workspace." }); if (!error) setTimeout(() => { window.location.href = "/setup"; }, 700); return; }
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password }); setBusy(false); if (error) setNotice({ type: "error", text: error.message }); else window.location.href = "/setup";
   }
