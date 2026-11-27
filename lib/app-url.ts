@@ -1,10 +1,6 @@
-export const STABLE_APP_URL = "https://momo-ledger-ghana-first-streaming-network.vercel.app";
+export const CANONICAL_APP_URL = "https://momo-ledger-ojiit6tsz-ghana-first-streaming-network.vercel.app";
 
-/**
- * Authentication links must point to the deployed app, not the browser origin.
- * A user may register from localhost during development, but the email is
- * opened later on a device where localhost refers to that device itself.
- */
+/** Authentication links must point to the exact deployed app, not localhost or the browser origin. */
 export function getAppUrl() {
-  return STABLE_APP_URL;
+  return CANONICAL_APP_URL;
 }
