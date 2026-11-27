@@ -21,7 +21,7 @@ const navigation: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Sales & receipts", href: "/sales", icon: ReceiptText },
   { label: "Float management", href: "/float-management", icon: WalletCards },
   { label: "Reports", href: "/reports", icon: BarChart3 },
-  { label: "Attendants · Future", href: "/attendants", icon: ContactRound },
+  { label: "Attendants", href: "/attendants", icon: ContactRound },
 ];
 
 const moreNavigation: { label: string; href: string; icon: LucideIcon }[] = [
