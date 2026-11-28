@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
-  BarChart3, Bell, BookOpen, ChevronRight, CircleDollarSign, ContactRound,
+  Activity, BarChart3, Bell, BookOpen, ChevronRight, CircleDollarSign, ContactRound,
   Home, LogOut, Menu, MoreHorizontal, Plus, Receipt, ReceiptText, Settings,
   ShieldCheck, Store, Users, WalletCards, X,
 } from "lucide-react";
@@ -19,9 +20,10 @@ const navigation: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Cashbook", href: "/cashbook", icon: BookOpen },
   { label: "Expenses", href: "/expenses", icon: CircleDollarSign },
   { label: "Sales & receipts", href: "/sales", icon: ReceiptText },
-  { label: "Float management · Future", href: "/float-management", icon: WalletCards },
+  { label: "Float management", href: "/float-management", icon: WalletCards },
+  { label: "Tracking", href: "/tracking", icon: Activity },
   { label: "Reports", href: "/reports", icon: BarChart3 },
-  { label: "Attendants · Future", href: "/attendants", icon: ContactRound },
+  { label: "Attendants", href: "/attendants", icon: ContactRound },
 ];
 
 const moreNavigation: { label: string; href: string; icon: LucideIcon }[] = [
@@ -78,7 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden w-64 shrink-0 bg-[var(--teal-dark)] text-white lg:fixed lg:inset-y-0 lg:flex lg:flex-col">
         <div className="border-b border-white/10 px-6 py-6">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--yellow)] text-lg font-bold text-[var(--teal-dark)]">M</span>
+            <Image src="/momo-ledger-logo.png" alt="MoMo Ledger logo" width={40} height={40} priority className="h-10 w-10 rounded-xl object-cover" />
             <span>
               <strong className="block text-lg font-semibold tracking-tight">MoMo Ledger</strong>
               <small className="text-xs text-white/65">A calmer way to run your MoMo business.</small>
@@ -117,7 +119,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Menu size={20} strokeWidth={1.8} />
             </button>
             <Link href="/dashboard" className="flex min-w-0 items-center gap-2 lg:hidden">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[var(--yellow)] font-bold text-[var(--teal-dark)]">M</span>
+              <Image src="/momo-ledger-logo.png" alt="MoMo Ledger logo" width={36} height={36} priority className="h-9 w-9 shrink-0 rounded-lg object-cover" />
               <span className="truncate text-sm font-semibold">MoMo Ledger</span>
             </Link>
             <div className="hidden min-w-0 text-sm text-white/75 lg:block">Your transactions. Your float. Your business. Under control.</div>
