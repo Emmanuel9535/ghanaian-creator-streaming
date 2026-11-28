@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
-  const publicPath = request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/health" || request.nextUrl.pathname === "/api/health" || request.nextUrl.pathname === "/manus-routes.json" || request.nextUrl.pathname === "/manifest.webmanifest" || request.nextUrl.pathname === "/sw.js" || request.nextUrl.pathname === "/offline.html" || request.nextUrl.pathname.startsWith("/icons/") || request.nextUrl.pathname.startsWith("/auth/");
+  const publicPath = request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/health" || request.nextUrl.pathname === "/api/health" || request.nextUrl.pathname === "/manus-routes.json" || request.nextUrl.pathname === "/manifest.webmanifest" || request.nextUrl.pathname === "/sw.js" || request.nextUrl.pathname === "/offline.html" || request.nextUrl.pathname === "/momo-ledger-logo.png" || request.nextUrl.pathname.startsWith("/icons/") || request.nextUrl.pathname.startsWith("/auth/");
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
