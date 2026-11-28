@@ -13,10 +13,10 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#00556f",
     categories: ["business", "finance"],
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/momo-ledger-icon-192-v2.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/momo-ledger-icon-192-v2.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: "/icons/momo-ledger-icon-512-v2.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/momo-ledger-icon-512-v2.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
